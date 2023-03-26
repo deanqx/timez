@@ -8,7 +8,7 @@
 #include <vector>
 #include <sstream>
 
-class Timer
+struct timez
 {
     struct scope
     {
@@ -44,7 +44,7 @@ class Timer
                 totalTime = sum;
             }
         }
-        void printp(std::vector<std::string> &hide)
+        void print(std::vector<std::string> &hide)
         {
             if (sub.size() > 0)
             {
@@ -94,7 +94,7 @@ class Timer
                     spaces << sub[i]->ID;
 
                     printf("%-15s%-15lld%-16lld%-15lld%s\n", tree.str().c_str(), sub[i]->totalTime / sub[i]->runs, sub[i]->totalTime, sub[i]->runs, spaces.str().c_str());
-                    sub[i]->printp(hide);
+                    sub[i]->print(hide);
                 }
             }
         }
@@ -155,20 +155,21 @@ public:
         current = new scope("", nullptr);
     }
 
-    static void printp(std::vector<std::string> hide, bool recalc = false)
+    static void print(bool recalcTotal = false, std::vector<std::string> hide = std::vector<std::string>())
     {
 #ifndef RELEASE
         printf("                       ---   Performance   ---\n");
-        printf("       %       Time(us)       Total(us)       Runs           ID\n");
+        printf("       %%       Time(us)       Total(us)       Used           ID\n");
 
-        if (recalc)
+        if (recalcTotal)
             current->recalc();
-        current->printp(hide);
+        current->print(hide);
+        printf("\n");
 #endif
     }
 
-    static void quit()
+    static void clean()
     {
-        free(current);
+        delete current;
     }
 };
